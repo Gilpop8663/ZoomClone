@@ -28,6 +28,10 @@ instrument(wsServer, {
 
 wsServer.on("connection", (socket) => {
   //ws 서버, socket.io 를 연결
+  socket["nickname"] = "Anon";
+  socket.on("nickname", (nick) => {
+    socket["nickname"] = nick;
+  });
   socket.on("join_room", (roomName) => {
     //프론트에서 받은 이벤트와 입력값으로 방을 만들고 입장함
     socket.join(roomName);
