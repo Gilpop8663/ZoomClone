@@ -4,31 +4,53 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title Document
-        link(rel="stylesheet", href="https://unpkg.com/mvp.css")
-    body 
-        header 
-            h1 hello
-        main 
-            #nickname 
-                form(action="")
-                    input(type="text",placeholder="nickname",required)
-                    button Save 
-            div#welcome
-                form
-                    input(type="text",placeholder="room name",required)
-                    button Enter Room
-            div#call
-                div#myStream
-                    video#myFace(autoplay,playsinline, width="400",height ="400")
-                    button#mute Mute
-                    button#camera Turn Camera Off
-                    select#cameras 
-                    video#peerFace(autoplay,playsinline, width="400",height ="400")
+        style 
+            include main.css
+        link(rel="stylesheet",href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm",crossorigin="anonymous")
+        title whats
+    body
+        #home 
+            header 
+                h1 Goom
+                i.fas.fa-video
+            h2
+            form(action="/")
+                button Home 
+                h3
+            #close 
+                form(action="/", method="get") 
+                    button Close
+        div#contents
+            div#screen
+                main 
+                    div#nickname Enter your nickname
+                        div
+                            form(action="")
+                                input(type="text",placeholder="nickname",required)
+                                button Save 
+                    div#welcome
+                        div 
+                            form
+                                div Let's talk to people.
+                                input(type="text",placeholder="room name",required)
+                                button Enter Room
+                    div#call
+                        div#callContent 
+                            div#videos 
+                                video#myFace(autoplay,playsinline, width="400",height ="400")
+                                video#peerFace(autoplay,playsinline, width="400",height ="400")
+                            div#icon 
+                                button#mute.fas.fa-microphone
+                                button#camera.fas.fa-video-slash
+                            div#camerasSelect
+                                h3 Camera Selects
+                                select#cameras
             #chat
-                ul 
-                form 
-                    input(type="text",placeholder="Please enter a message")
-                    button Send
+                div
+                    div#chatRoom
+                        ul 
+                    form 
+                        input(type="text",placeholder="Please enter a message",required)
+                        button Send
     script(src="/socket.io/socket.io.js") 
     script(src="/public/js/app.js") 

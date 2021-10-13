@@ -7,9 +7,16 @@ const camerasSelect = document.getElementById("cameras");
 
 const call = document.getElementById("call");
 const chat = document.getElementById("chat");
+const welcome = document.getElementById("welcome");
+const nick = document.getElementById("nickname");
+const close = document.getElementById("close");
+const home = document.getElementById("home");
 
+home.hidden = true;
 call.hidden = true;
 chat.hidden = true;
+close.hidden = true;
+welcome.hidden = true;
 
 let myStream;
 let muted = false; // 처음엔 음소거가 아님
@@ -60,7 +67,7 @@ async function getMedia(deviceId) {
       //사용자에게 미디어 입력 장치 사용 권한을 요청하며, 사용자가 수락하면 요청한 미디어 종류의 트랙을 포함한 MediaStream (en-US)을 반환
       deviceId ? userConstrains : defaultConstrains // 디바이스 아이디가 있다면 user가 설정한 카메라를 실행 없다면 초기값 카메라 실행
     );
-    console.log(myStream);
+    //console.log(myStream);
     myFace.srcObject = myStream; // srcObject란 현재 HTMLMediaElement 객체에서 재생중이거나 재생되었던 미디어를 참조하는 MediaStream 객체를 참조한다.
     if (!deviceId) {
       // 디바이스 아이디가 없다면 getCameras 함수 실행
@@ -77,10 +84,12 @@ function handleMuteClick() {
   });
   if (muted === false) {
     // 음소거가 아닐 때 클릭 시
-    muteBtn.innerText = "Unmute"; // 음소거 해제하기로 변하고
+    muteBtn.className = "";
+    muteBtn.className = "fas fa-microphone-slash"; // 음소거 해제하기로 변하고
     muted = true; // 음소거로 변함
   } else {
-    muteBtn.innerText = "Mute"; // 음소거일때 클릭 시
+    muteBtn.className = "";
+    muteBtn.className = "fas fa-microphone"; // 음소거일때 클릭 시
     muted = false;
   }
 }
@@ -91,10 +100,10 @@ function handleCameraClick() {
   });
   if (cameraOff === false) {
     // 카메라가 켜져 있을 때
-    cameraBtn.innerText = "Turn Camera Off"; // 카메라를 끄는 버튼이 활성화 됨
+    cameraBtn.className = "fas fa-video-slash"; // 카메라를 끄는 버튼이 활성화 됨
     cameraOff = true; // 카메라를 끄는 것을 true로 바꿈
   } else {
-    cameraBtn.innerText = "Turn Camera On"; // 카메라를 키는 버튼이 활성화 됨
+    cameraBtn.className = "fas fa-video"; // 카메라를 키는 버튼이 활성화 됨
     cameraOff = false; //
   }
 }
@@ -118,13 +127,14 @@ camerasSelect.addEventListener("input", handleCameraChange);
 
 // welcome Form (join room) // 방 입장에 관한 코드들
 
-const welcome = document.getElementById("welcome");
 const welcomeForm = welcome.querySelector("form");
 
 async function initCall() {
   welcome.hidden = true;
+  nick.hidden = true;
   call.hidden = false;
   chat.hidden = false;
+  close.hidden = false;
   await getMedia();
   makeConnection(); // 서버로 보냄
 }
@@ -132,6 +142,8 @@ async function initCall() {
 async function handleWelcomeSubmit(event) {
   event.preventDefault(); // 기존이벤트 초기화
   const input = welcomeForm.querySelector("input");
+  const h2 = home.querySelector("h2");
+  h2.innerText = `Room Name : ${input.value}`;
   //console.log(input.value);
   await initCall(); // myPeerConnection 생성에 서버측의 속도를 맞추기 위함
   socket.emit("join_room", input.value); // 백앤드로 join_room 에 대한 이벤트와 인자 , 실행할 함수를 보냄
@@ -147,7 +159,6 @@ socket.on("welcome", async () => {
   // Peer A가 offer을 생성하고 연결 인터페이스와 관련이 있는 로컬 설명 (local description)을 변경하고 그 offer을 보내는 과정입니다.
   try {
     //console.log("오퍼를 생성");
-
     myDataChannel = myPeerConnection.createDataChannel("chat"); // peer to peer 에서 파일,채팅,이미지 등을 교환 할수 있는 dataChannel 생성
     myDataChannel.addEventListener("message", (event) => {
       createChat(event.data); // 자신의 메세지와 닉네임을 보냄
@@ -249,6 +260,7 @@ function handleChatSubmit(event) {
   myDataChannel.send(`${nickName} : ${input.value}`);
   li.innerText = `${nickName} : ${input.value}`;
   ul.appendChild(li);
+  ul.scrollTop = ul.scrollHeight;
   input.value = "";
 }
 
@@ -264,14 +276,35 @@ chat.addEventListener("submit", handleChatSubmit);
 
 //nickname save code 닉네임을 정함
 
-const nick = document.getElementById("nickname");
 const nickForm = nick.querySelector("form");
 
 function handleNickSubmit(event) {
   event.preventDefault();
   const input = nickForm.querySelector("input");
+  const MyNick = home.querySelector("h3");
   nickName = input.value;
-  console.log(nickName);
+  MyNick.innerText = `Nickname : ${input.value}`;
+  home.hidden = false;
+  welcome.hidden = false;
+  //console.log(nickName);
 }
 
 nickForm.addEventListener("submit", handleNickSubmit);
+
+// close WebRTC  접속끊을때의 코드
+
+const closeForm = close.querySelector("form");
+
+closeForm.addEventListener("click", handleClose);
+
+function handleClose(event) {
+  location.href = "/";
+  event.preventDefault();
+  const ul = chat.querySelector("ul");
+  const li = document.createElement("li");
+  myDataChannel.send(`${nickName} is left\nMake a new room`);
+  li.innerText = `${nickName} is left`;
+  ul.appendChild(li);
+  myDataChannel.close();
+  myPeerConnection.close();
+}
