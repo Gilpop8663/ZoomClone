@@ -4,7 +4,7 @@
   "description": "Zoom Clone Coding",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon"
+    "start": "nodemon"
   },
   "devDependencies": {
     "@babel/cli": "^7.15.4",
