@@ -6,6 +6,8 @@ import express from "express";
 
 const app = express();
 
+const PORT = process.env.PORT || 3000;
+
 app.set("view engine", "pug");
 app.set("views", __dirname + "/views");
 
@@ -48,6 +50,6 @@ wsServer.on("connection", (socket) => {
   });
 });
 
-const handleListen = () => console.log(`Listening on http:localhost:3000`);
+const handleListen = () => console.log(`Listening on http:localhost:${PORT}`);
 
-httpServer.listen(3000, handleListen);
+httpServer.listen(PORT, handleListen);
