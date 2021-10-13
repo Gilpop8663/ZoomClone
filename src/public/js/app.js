@@ -270,6 +270,7 @@ function createChat(msg) {
   const li = document.createElement("li");
   li.innerText = `${msg}`;
   ul.appendChild(li);
+  ul.scrollTop = ul.scrollHeight;
 }
 
 chat.addEventListener("submit", handleChatSubmit);

@@ -1,7 +1,6 @@
 @import "reset.css";
 body {
   background-color: #19191a;
-  width: 100%;
   height: 100%;
   justify-content: center;
   align-items: center;
@@ -242,6 +241,10 @@ main {
   overflow-y: scroll;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+#chatRoom ul::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
 }
 
 #chatRoom::-webkit-scrollbar {
